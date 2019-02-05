@@ -1,0 +1,29 @@
+[09/25/2018 12:35:44,941 CDT] INFO [com.uag.dia.toolsautomation.jobs.webi.WebiJob] (SyntheticMonitoringSchedulerTEST_Worker-2) WebiJob.executeImpl() method entry
+[09/25/2018 12:35:44,970 CDT] INFO [com.uag.dia.toolsautomation.jobs.webi.WebiJob] (SyntheticMonitoringSchedulerTEST_Worker-2) About to run BO report
+[09/25/2018 12:35:44,979 CDT] INFO [com.uag.inf.selenium.synthMon.SeleniumWebiHelper] (SyntheticMonitoringSchedulerTEST_Worker-2) Environment is TEST
+[09/25/2018 12:35:44,995 CDT] ERROR [com.uag.dia.toolsautomation.jobs.webi.WebiJob] (SyntheticMonitoringSchedulerTEST_Worker-2) Caught Exception while trying to executeImpl on WebiJob 
+	Driver info: driver.version: RemoteWebDriverorg.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:593)
+	org.openqa.selenium.remote.RemoteWebDriver.startSession(RemoteWebDriver.java:240)
+	org.openqa.selenium.remote.RemoteWebDriver.<init>(RemoteWebDriver.java:126)
+	org.openqa.selenium.remote.RemoteWebDriver.<init>(RemoteWebDriver.java:153)
+	com.uag.inf.selenium.synthMon.SeleniumWebiHelper.<init>(SeleniumWebiHelper.java:105)
+	com.uag.dia.toolsautomation.jobs.webi.WebiJob.executeImpl(WebiJob.java:65)
+	com.uag.dia.toolsautomation.jobs.GenericJob.execute(GenericJob.java:272)
+	org.quartz.core.JobRunShell.run(JobRunShell.java:213)
+	org.quartz.simpl.SimpleThreadPool$WorkerThread.run(SimpleThreadPool.java:557)
+[09/25/2018 12:35:44,996 CDT] INFO [com.uag.dia.toolsautomation.jobs.webi.WebiJob] (SyntheticMonitoringSchedulerTEST_Worker-2) Login success: false Launch success: false Integrity check success: false
+[09/25/2018 12:35:44,997 CDT] INFO [com.uag.inf.persistence.app.businessObjects.dao.WebiDAO] (SyntheticMonitoringSchedulerTEST_Worker-2) updateWebi method entry
+[09/25/2018 12:35:45,010 CDT] ERROR [com.uag.dia.toolsautomation.jobs.webi.WebiJob] (SyntheticMonitoringSchedulerTEST_Worker-2) Caught NullPointerException while trying to tearDown on WebiJob 
+	stack_trace=nullcom.uag.dia.toolsautomation.jobs.webi.WebiJob.executeImpl(WebiJob.java:160)
+	com.uag.dia.toolsautomation.jobs.GenericJob.execute(GenericJob.java:272)
+	org.quartz.core.JobRunShell.run(JobRunShell.java:213)
+	org.quartz.simpl.SimpleThreadPool$WorkerThread.run(SimpleThreadPool.java:557)
+[09/25/2018 13:30:45,596 CDT] INFO [WebiJob] VIP Efforts: Retrying webi VIP Efforts. This is for retry 10
+[09/25/2018 13:30:45,597 CDT] ERROR [WebiJob] Caught NullPointException while trying to tearDown on WebiJob 
+	stack_trace=nullcom.uag.inf.selenium.synthMon.SeleniumMonitor.exitScript(SeleniumMonitor.java:201)
+	com.uag.inf.selenium.synthMon.SeleniumMonitor.TransactionFailureWithClose(SeleniumMonitor.java:154)
+	com.uag.inf.selenium.synthMon.SeleniumWebiHelper.transactionFailureTeardown(SeleniumWebiHelper.java:724)
+	com.uag.dia.toolsautomation.jobs.webi.WebiJob.executeImpl(WebiJob.java:178)
+	com.uag.dia.toolsautomation.jobs.GenericJob.execute(GenericJob.java:272)
+	org.quartz.core.JobRunShell.run(JobRunShell.java:213)
+	org.quartz.simpl.SimpleThreadPool$WorkerThread.run(SimpleThreadPool.java:557)
