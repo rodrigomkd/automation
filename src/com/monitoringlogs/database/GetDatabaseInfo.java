@@ -32,7 +32,7 @@ public class GetDatabaseInfo{
 		try{  
 			Class.forName(DRIVER_CLASSPATH);  
 			Connection con=DriverManager.getConnection(  
-			"jdbc:mysql://199.79.63.142:3306/gvvcobez_saving_box","gvvcobez_rodrigo","Rodrigo.1");  
+					"jdbc:mysql://"+SERVER+":"+PORT+"/"+DATABASE, USER, PASSWORD);  
 			//here sonoo is database name, root is username and password  
 			Statement stmt=con.createStatement();  
 			ResultSet rs=stmt.executeQuery("select * from socio");  
@@ -42,15 +42,7 @@ public class GetDatabaseInfo{
 			}catch(Exception e){ System.out.println(e);}  
 	}
 	
-	public static void main(String args[]){  
-		GetDatabaseInfo sql = new GetDatabaseInfo();
-		List<String> tables = sql.getTables();
-		for(String table : tables) {
-			System.out.println(table);
-			//sql.getColumnsAsJavaAttributes(table);
-			sql.getColumnsAsInsertQuery(table);
-		}
-	} 
+	
 	
 	public List<String> getTables(){
 		Connection con = null;
@@ -187,5 +179,15 @@ public class GetDatabaseInfo{
 		
 		throw new IllegalArgumentException("Data Type not found: " + dataType);
 	}
+	
+	public static void main(String args[]){  
+		GetDatabaseInfo sql = new GetDatabaseInfo();
+		List<String> tables = sql.getTables();
+		for(String table : tables) {
+			System.out.println(table);
+			//sql.getColumnsAsJavaAttributes(table);
+			sql.getColumnsAsInsertQuery(table);
+		}
+	} 
 } 
 

@@ -3,8 +3,13 @@ package com.monitoringlogs.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.monitoringlogs.entities.Application;
 import com.monitoringlogs.entities.Incident;
 import com.monitoringlogs.entities.Message;
 
@@ -96,5 +101,97 @@ public class SqlConnection {
 				}
 			}		
 		}
+	}
+	
+	public List<Application> getApplications() {
+		Connection con = null;
+		Statement stmt = null;
+		List<Application> apps = null;
+		
+		try {
+			Class.forName(DRIVER_CLASSPATH);
+			
+			con = DriverManager.getConnection(  
+					"jdbc:mysql://"+SERVER+":"+PORT+"/"+DATABASE, USER, PASSWORD);   
+					
+			stmt=con.createStatement();  
+			ResultSet rs=stmt.executeQuery("SELECT idapplication, app_name FROM application");  
+			apps = new ArrayList<Application>();
+			
+			while(rs.next())  {
+				Application app = new Application();
+				app.setIdapplication(rs.getInt(1));
+				app.setApp_name(rs.getString(2));
+				apps.add(app);
+			}
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}  finally {	
+			if(stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(con != null){
+				try {				
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}		
+		}
+		
+		return apps;
+	}
+	
+	public int getIdserverByApp(int idapplication) {
+		Connection con = null;
+		Statement stmt = null;
+		int idserver = -1;
+		
+		try {
+			Class.forName(DRIVER_CLASSPATH);
+			
+			con = DriverManager.getConnection(  
+					"jdbc:mysql://"+SERVER+":"+PORT+"/"+DATABASE, USER, PASSWORD);   
+					
+			stmt=con.createStatement();  
+			ResultSet rs=stmt.executeQuery("SELECT idserver FROM application_server WHERE idapplication = " 
+					+ idapplication);  
+			
+			while(rs.next())  {
+				idserver = rs.getInt(1);
+			}
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}  finally {	
+			if(stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(con != null){
+				try {				
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}		
+		}
+		
+		return idserver;
+	}
+	
+	public static void main(String [] mkd) {
+		new SqlConnection().getApplications().forEach(app -> System.out.println(app.getApp_name()));;
+		
 	}
 }

@@ -1,10 +1,14 @@
 package com.monitoringlogs.emailservice;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
+import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Store;
@@ -14,7 +18,8 @@ public class EmailUtils {
 	private static final String username = "";// change accordingly
 	private static final String password = "";// change accordingly
 	
-	public static void check() {
+	public static List<String> check() {
+		List<String> emails = null;
 		try {
 
 		      //create properties field
@@ -37,6 +42,7 @@ public class EmailUtils {
 		      // retrieve the messages from the folder in an array and print it
 		      Message[] messages = emailFolder.getMessages();
 		      System.out.println("messages.length---" + messages.length);
+		      emails = new ArrayList<String>();
 
 		      for (int i = 0, n = messages.length; i < n; i++) {
 		         Message message = messages[i];
@@ -44,8 +50,10 @@ public class EmailUtils {
 		         System.out.println("Email Number " + (i + 1));
 		         System.out.println("Subject: " + message.getSubject());
 		         System.out.println("From: " + message.getFrom()[0]);
-		         System.out.println("Text: " + message.getContent().toString());
-
+		         
+		         Multipart mp = (Multipart)message.getContent();
+		         BodyPart bodyPart = mp.getBodyPart(0);
+		         emails.add(bodyPart.getContent().toString());
 		      }
 
 		      //close the store and folder objects
@@ -59,5 +67,7 @@ public class EmailUtils {
 		      } catch (Exception e) {
 		         e.printStackTrace();
 		      }
-		   }
+		
+		return emails;
+	}
 }
