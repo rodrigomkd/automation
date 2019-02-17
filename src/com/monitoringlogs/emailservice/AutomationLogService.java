@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import com.monitoringlogs.database.SqlConnection;
 import com.monitoringlogs.entities.Application;
+import com.monitoringlogs.entities.Incident;
 import com.monitoringlogs.entities.Message;
 import com.monitoringlogs.ftp.FTPConnection;
 
@@ -19,6 +20,7 @@ public class AutomationLogService extends Thread {
 	public void run() {
 		LOGGER.log(Level.INFO, "Start Automation Logs Service...");
 		SqlConnection sql = new SqlConnection();
+		
 		//check email every minute
 		try {
 			while(true) {
@@ -31,14 +33,41 @@ public class AutomationLogService extends Thread {
 					FTPConnection ftp = new FTPConnection();
 					List<Message> logs = ftp.readLogsFile(app.getLogs_path(), timestamp);
 					
-					//save logs
+					//save all logs
+					Message errorLog = null;
 					for(Message log : logs){
 						log.setIdserver(getIdserver(app.getIdapplication()));
 						log.setIdapplication(app.getIdapplication());
 						sql.insertLog(log);
+						if(log.getLevel().equals(Message.Level.ERROR.toString()) 
+								|| log.getLevel().equals(Message.Level.FATAL.toString())) {
+							errorLog = log;
+						}
 					}
 					
-					//TODO: create incident
+					Incident inc = new Incident();
+					timestamp = new Timestamp(new Date().getTime());
+					inc.setCreation_datetime(timestamp);
+					//inc.setEnd_datetime(null);
+					inc.setIdapplication(app.getIdapplication());
+					Incident completedInc = sql.getIdCategory(errorLog.getException(), errorLog.getMessage());
+					inc.setIdcategory(completedInc.getIdcategory());
+					inc.setIdsolution(completedInc.getIdsolution());
+					inc.setIduser(1);//
+					inc.setIncident_number(sql.getIncidentNumber());
+					//inc.setStart_datetime(start_datetime);
+					inc.setStatus(Incident.STATUS_NEW);
+					
+					//set related logs to incident
+					for(Message log : logs) {
+						if(log.getStringTimestamp().equals(errorLog.getStringTimestamp())) {
+							sql.insertLogToIncident(inc.getIdincident(), log.getIdlog());
+						}
+					}
+					
+					//send email to developer
+					//TODO: create sendEmail method
+					//EmailUtils.sendEmail(url, email);
 				}
 				Thread.sleep(60000);
 			}			

@@ -20,7 +20,7 @@ public class Message {
 	private String event;
 	
 	//level types
-	enum Level 
+	public static enum Level 
 	{ 
 	    INFO, ERROR, WARNING, FATAL, DEBUG; 
 	} 
@@ -173,5 +173,14 @@ public class Message {
 				+ source + ", level=" + level + ", message=" + message + ", event=" + event + "]";
 	}
 	
-	
+	public String getStringTimestamp() {
+		String strTimestamp = null;
+		
+		if(time != null) {
+			strTimestamp = time.toString();
+			strTimestamp = strTimestamp.substring(0, strTimestamp.length() - 3);
+		}
+		
+		return strTimestamp;
+	}
 }

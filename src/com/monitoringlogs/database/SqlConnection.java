@@ -25,10 +25,8 @@ public class SqlConnection {
 		Connection con = null;
 		
 		try {
-			Class.forName(DRIVER_CLASSPATH);
-			
-			con = DriverManager.getConnection(  
-					"jdbc:mysql://"+SERVER+":"+PORT+"/"+DATABASE, USER, PASSWORD);   
+			Class.forName(DRIVER_CLASSPATH);			
+			con = DriverManager.getConnection("jdbc:mysql://"+SERVER+":"+PORT+"/"+DATABASE, USER, PASSWORD);   
 					
 			final String query = "INSERT INTO log "
 					+ "(idserver,idapplication,time,exception,logger,resource,source,"
@@ -124,6 +122,8 @@ public class SqlConnection {
 				app.setApp_name(rs.getString(2));
 				apps.add(app);
 			}
+			
+			rs.close();
 		
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -190,8 +190,144 @@ public class SqlConnection {
 		return idserver;
 	}
 	
-	public static void main(String [] mkd) {
-		new SqlConnection().getApplications().forEach(app -> System.out.println(app.getApp_name()));;
+	public String getIncidentNumber() {
+		Connection con = null;
+		Statement stmt = null;
+		String incidentNumber = "INC";//inc0000100
+		int idincident = 1000; //set 1 by default
 		
+		try {
+			Class.forName(DRIVER_CLASSPATH);
+			
+			con = DriverManager.getConnection(  
+					"jdbc:mysql://"+SERVER+":"+PORT+"/"+DATABASE, USER, PASSWORD);   
+					
+			stmt=con.createStatement();  
+			ResultSet rs=stmt.executeQuery("SELECT MAX(incident_number) FROM incident");
+			
+			while(rs.next())  {
+				String currentIncNumber = rs.getString(1);
+				if(currentIncNumber != null) {
+					currentIncNumber = currentIncNumber.substring(3);
+					idincident = Integer.valueOf(currentIncNumber);
+				}
+				
+				idincident++;		
+			}
+			
+			if(String.valueOf(idincident).length() == 4) {
+				incidentNumber += "000" + idincident;
+			} else if(String.valueOf(idincident).length() == 5) {
+				incidentNumber += "00" + idincident;
+			} else if(String.valueOf(idincident).length() == 6) {
+				incidentNumber += "0" + idincident;
+			} else if(String.valueOf(idincident).length() == 7) {
+				incidentNumber += idincident;
+			}
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}  finally {	
+			if(stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(con != null){
+				try {				
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}		
+		}
+		
+		return incidentNumber;
+	}
+	
+	public Incident getIdCategory(String exception, String message) {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		Incident inc = null;
+		
+		try {
+			Class.forName(DRIVER_CLASSPATH);			
+			con = DriverManager.getConnection("jdbc:mysql://"+SERVER+":"+PORT+"/"+DATABASE, USER, PASSWORD);   
+					
+			final String QUERY = "SELECT idcategory FROM `log` WHERE exception = ? AND message = ?";
+			
+			stmt = con.prepareStatement(QUERY);
+			stmt.setString(1, exception);
+			stmt.setString(2, message);
+			
+			ResultSet rs=stmt.executeQuery();
+			
+			while(rs.next())  {
+				inc = new Incident();
+				inc.setIdcategory(rs.getInt("idcategory"));
+				inc.setIdsolution(rs.getInt("idsolution"));
+				break;
+			}
+			
+			rs.close();
+		
+		} catch (Exception e) {
+			System.err.println("Error on getIdCategory(): " + e);
+			e.printStackTrace();
+		}  finally {	
+			if(stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(con != null){
+				try {				
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}		
+		}
+		
+		return inc;
+	}
+
+	public void insertLogToIncident(int idincident, int idlog, int idserver, int idapplication) {
+		Connection con = null;
+		
+		try {
+			Class.forName(DRIVER_CLASSPATH);			
+			con = DriverManager.getConnection("jdbc:mysql://"+SERVER+":"+PORT+"/"+DATABASE, USER, PASSWORD);   
+					
+			final String query = "INSERT INTO log_incident "
+					+ "(idincident,idlog,idserver,idapplication"
+					+ ") VALUES (?,?,?,?);";
+					
+			PreparedStatement preparedStmt = con.prepareStatement(query);
+			preparedStmt.setInt(1, idincident);
+			preparedStmt.setInt(2, idlog);
+			preparedStmt.setInt(3, idserver);
+			preparedStmt.setInt(4, idapplication);
+			
+			preparedStmt.execute();	
+			preparedStmt.close();
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}  finally {
+			if(con != null){
+				try {				
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}		
+		}
 	}
 }

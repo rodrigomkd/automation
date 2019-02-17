@@ -3,6 +3,10 @@ package com.monitoringlogs.entities;
 import java.sql.Timestamp;
 
 public class Incident {
+	public static char STATUS_NEW = 'N';
+	public static char STATUS_W = 'W';
+	public static char STATUS_C = 'C';
+	
 	private int idincident;
 	private int idapplication;
 	private int idcategory;
