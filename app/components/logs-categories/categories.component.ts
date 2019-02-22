@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+
+//service
+import { AppServices } from '../../services/app.services';
 
 @Component({
 	selector: 'categories',
@@ -6,6 +10,40 @@ import { Component } from '@angular/core';
 })
 
 export class CategoriesComponent {
+  public applications:any = [];
+  loaded = false;
+
+  ngOnInit(){
+    this.applications = this.appService.retrieveApplications().subscribe((applications) => {
+
+            // do stuff with our data here.
+            // ....
+
+            // asign data to our class property in the end
+            // so it will be available to our template
+            //console.log("applications", applications);
+            this.applications = applications;
+            this.barChartData = this.applications;
+            this.barChartData.length = this.applications.length;
+            for(let app in this.applications){
+              console.log("applications", app);
+        let application = {};
+        application.data = [10,20,30,40,50,60,70];
+        application.label = this.applications[app].app_name;
+        this.barChartData[app] = application;
+        
+    }
+    this.loaded = true;
+            //this.randomize();
+        })
+
+    
+  }
+
+  constructor(private appService: AppServices, private router: Router) {
+
+  }
+
   public barChartOptions:any = {
     scaleShowVerticalLines: false,
     responsive: true
@@ -15,8 +53,9 @@ export class CategoriesComponent {
   public barChartLegend:boolean = true;
  
   public barChartData:any[] = [
-    {data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A'},
-    {data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B'}
+    {data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A'}
+    //{data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B'},
+    //{data: [28, 48, 40, 19, 86, 27, 90], label: 'Series C'}
   ];
  
   // events
@@ -30,17 +69,14 @@ export class CategoriesComponent {
  
   public randomize():void {
     // Only Change 3 values
-    let data = [
-      Math.round(Math.random() * 100),
-      59,
-      80,
-      (Math.random() * 100),
-      56,
-      (Math.random() * 100),
-      40];
+    let data = [Math.round(Math.random() * 100),59,80,(Math.random() * 100),56,(Math.random() * 100),40];
+    
+    
     let clone = JSON.parse(JSON.stringify(this.barChartData));
+    console.info(clone);
     clone[0].data = data;
     this.barChartData = clone;
+    
     /**
      * (My guess), for Angular to recognize the change in the dataset
      * it has to change the dataset variable directly,

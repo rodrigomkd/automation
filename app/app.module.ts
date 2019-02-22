@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpModule } from '@angular/http';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -10,6 +11,9 @@ import { CategoriesComponent } from './components/logs-categories/categories.com
 
 //Charts
 import { ChartsModule } from 'ng2-charts';
+
+//Services
+import { AppServices } from './services/app.services';
 
 
 @NgModule({
@@ -22,9 +26,10 @@ import { ChartsModule } from 'ng2-charts';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ChartsModule
+    ChartsModule,
+    HttpModule
   ],
-  providers: [],
+  providers: [AppServices],
   bootstrap: [AppComponent] 
 })
 export class AppModule { }
