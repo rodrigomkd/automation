@@ -78,4 +78,11 @@ public class Incident {
 		this.idsolution = idsolution;
 	}
 	
+	@Override
+	public String toString() {
+		return "Incident [idincident=" + idincident + ", idapplication=" + idapplication + ", idcategory=" + idcategory
+				+ ", incident_number=" + incident_number + ", creation_datetime=" + creation_datetime
+				+ ", start_datetime=" + start_datetime + ", end_datetime=" + end_datetime + ", status=" + status
+				+ ", iduser=" + iduser + ", idsolution=" + idsolution + "]";
+	}
 }

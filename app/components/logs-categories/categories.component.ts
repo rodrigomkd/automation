@@ -14,30 +14,61 @@ export class CategoriesComponent {
   loaded = false;
 
   ngOnInit(){
-    this.applications = this.appService.retrieveApplications().subscribe((applications) => {
+    this.applications = this.appService.retrieveIssuesCategory().subscribe((applications) => {
+      this.applications = applications;
+      //this.barChartData = this.applications;
+      //this.barChartData.length = this.applications.length;
+      this.barChartLabels = [];
+      this.barChartData = [];
 
-            // do stuff with our data here.
-            // ....
+      let dataAlert:any = {};
+      dataAlert.data = [];
+      dataAlert.label = "ALERT";
+      
+      let dataError:any = {};
+      dataError.data = [];
+      dataError.label = "ERROR";
 
-            // asign data to our class property in the end
-            // so it will be available to our template
-            //console.log("applications", applications);
-            this.applications = applications;
-            this.barChartData = this.applications;
-            this.barChartData.length = this.applications.length;
-            for(let app in this.applications){
-              console.log("applications", app);
-        let application = {};
-        application.data = [10,20,30,40,50,60,70];
-        application.label = this.applications[app].app_name;
-        this.barChartData[app] = application;
+      let dataMaint:any = {};
+      dataMaint.data = [];
+      dataMaint.label = "MAINTENANCE";
+
+      let dataCritical:any = {};
+      dataCritical.data = [];
+      dataCritical.label = "CRITICAL";
+
+      let dataNotIssue:any = {};
+      dataNotIssue.data = [];
+      dataNotIssue.label = "NOT ISSUE";
+
+      for(let app in this.applications) {
+        console.log("apps" , this.applications);
+        //add chart label for months
+        if(! this.barChartLabels.includes(this.applications[app].yyyymm)) {
+          this.barChartLabels.push(this.applications[app].yyyymm);
+        }
         
-    }
-    this.loaded = true;
-            //this.randomize();
-        })
+        if(this.applications[app].category_name == 'ALERT'){
+          dataAlert.data.push(this.applications[app].issues_count);
+        }else if(this.applications[app].category_name == 'ERROR'){
+          dataError.data.push(this.applications[app].issues_count);
+        }else if(this.applications[app].category_name == 'MAINTENANCE'){
+          dataMaint.data.push(this.applications[app].issues_count);
+        }else if(this.applications[app].category_name == 'NOT ISSUE'){
+          dataCritical.data.push(this.applications[app].issues_count);
+        }else if(this.applications[app].category_name == 'CRITICAL'){
+          dataNotIssue.data.push(this.applications[app].issues_count);
+        }        
+      }
 
-    
+      this.barChartData.push(dataAlert);
+      this.barChartData.push(dataError);
+      this.barChartData.push(dataMaint);
+      this.barChartData.push(dataCritical);
+      this.barChartData.push(dataNotIssue);
+
+      this.loaded = true;
+    })
   }
 
   constructor(private appService: AppServices, private router: Router) {

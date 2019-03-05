@@ -29,6 +29,8 @@ public class AutomationLogService extends Thread {
 					Application app = getApplication(email);
 					Timestamp timestamp = getTimestamp(email);
 					
+					//Get server by Application
+					
 					//search logs from the server
 					FTPConnection ftp = new FTPConnection();
 					List<Message> logs = ftp.readLogsFile(app.getLogs_path(), timestamp);
@@ -61,7 +63,7 @@ public class AutomationLogService extends Thread {
 					//set related logs to incident
 					for(Message log : logs) {
 						if(log.getStringTimestamp().equals(errorLog.getStringTimestamp())) {
-							sql.insertLogToIncident(inc.getIdincident(), log.getIdlog());
+							sql.insertLogToIncident(inc.getIdincident(), log.getIdlog(), 1, app.getIdapplication());
 						}
 					}
 					
